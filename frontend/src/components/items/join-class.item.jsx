@@ -1,103 +1,133 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-
+import {
+  Cancel,
+  CancelOutlined,
+  CancelPresentation,
+  ControlPointDuplicate,
+  CopyrightOutlined,
+  Edit,
+  Link,
+  Save,
+} from "@material-ui/icons";
 import axios from "axios";
-
-import { Link } from "react-router-dom";
+import { useState } from "react";
 
 import { toast } from "react-toastify";
-
-import { BiEdit, BiCopy, BiChevronRightSquare } from "react-icons/bi";
-import { ClasslinkPopupComponent } from "../classlink-popup.component";
 import { isAuth } from "../../helpers/auth";
+import UserSelectorItem from "./user-selector.item";
 
-export const JoinClassItem = ({ classlink }) => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [manageId, setManageId] = useState(classlink._id);
-  const [classLink, setClassLink] = useState(classlink.classLink);
-  const [studentID, setStudentID] = useState(classlink.studentID);
-  const [teacherID, setTeacherID] = useState(classlink.teacherID);
-  const openPopup = () => {
-    setShowPopup((prev) => !prev);
+const JoinClassItem = (props) => {
+  const [editMode, setEditMode] = useState(false);
+  const [classUrl, setClassUrl] = useState(props.classlink.classLink);
+  const handleopyLink = () => {
+    var copyText = document.getElementById(props.classlink._id);
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    // toast.success("Link copied");
+    copyText.setSelectionRange(0, 0);
+  };
+  const handleGoto = () => {
+    var url = classUrl;
+    var win = window.open(url, "_blank");
+    win.focus();
+  };
+
+  const handleToggleEditMode = () => {
+    if (editMode) {
+      setClassUrl(props.classlink.classLink);
+    }
+    setEditMode((prev) => !prev);
+  };
+  const onChangeClassLink = (e) => {
+    setClassUrl(e.target.value);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (classUrl || true) {
+      axios
+        .put(
+          `${process.env.REACT_APP_SERVER_URL}/syllabus/map/` +
+            props.classlink._id,
+          {
+            classLink: classUrl,
+          }
+        )
+        .then((response) => {
+          props.loadClasses();
+        });
+    } else {
+      toast.error("please fill all fields");
+    }
   };
 
   return (
-    <>
-      <div
-        key={classlink._id}
-        href="#"
-        className="list-group-item list-group-item-action flex-column align-items-start m-3 p-3  container shadow border border-black "
-      >
-        <div className="d-flex w-100 justify-content-between">
-          <h5 className="mb-1">{classlink.name}</h5>
-          {classlink.classLink ? (
-            <small>
-              <a
-                onClick={() => {
-                  var copyText = document.getElementById(classlink._id);
-                  copyText.select();
-                  copyText.setSelectionRange(0, 99999);
-                  document.execCommand("copy");
-                  // toast.success("Link copied");
-                  copyText.setSelectionRange(0, 0);
-                }}
-                className="btn  btn-secondary-outline"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="Copy link"
-              >
-                <BiCopy />
-              </a>{" "}
-              <a
-                href={classlink.classLink}
-                className="btn  btn-secondary-outline"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="Goto link"
-              >
-                <BiChevronRightSquare />
-              </a>
-            </small>
-          ) : (
-            <small>Class not started yet</small>
-          )}
+    <li className="join-class-item container">
+      <div className="top-block">
+        <div className="avatar-name">
+          <div className="user-avatar">
+            <div
+              className="avatar-img"
+              style={{
+                backgroundImage: `url(${process.env.REACT_APP_SERVER_URL}/${
+                  props.classlink.oppDetails.imagePath
+                    ? props.classlink.oppDetails.imagePath
+                    : process.env.REACT_APP_DEFAULT_PROFILE_PIC
+                })`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                height: "100%",
+                width: "100%",
+                backgroundPosition: "center",
+              }}
+            ></div>
+          </div>
+          <div className="name-course-block">
+            <h3>{props.classlink.oppDetails.name}</h3>
+            {props.classlink.courseName ? (
+              <p>{props.classlink.courseName}</p>
+            ) : null}
+          </div>
         </div>
+      </div>
+      <div className="textarea-block">
         <textarea
           rows={1}
-          id={classlink._id}
+          id={props.classlink._id}
           className="m-1 border rounded-5  container"
-          value={classlink.classLink}
-          readOnly
+          value={classUrl}
+          readOnly={!editMode}
+          onChange={onChangeClassLink}
         ></textarea>
-        {isAuth().role === "teacher" ? (
-          <>
-            {/* <Link
-              className="btn btn-sm btn-info mr-2 float-right"
-              to={"/classlinkedit/" + classlink._id}
-            >
-              Edit
-            </Link> */}
-            <Link
-              className="btn   btn-secondary-outline float-right"
-              onClick={() => openPopup()}
-              data-toggle="tooltip"
-              data-placement="top"
-              title="Edit link"
-            >
-              <BiEdit />
-            </Link>
-          </>
-        ) : null}
+        {classUrl ? (
+          <div className="copy-goto-buttons-block">
+            <button onClick={handleopyLink}>
+              {props.joinClassContent.copyContent}
+            </button>
+            <button onClick={handleGoto}>
+              {props.joinClassContent.gotoContent}
+            </button>
+          </div>
+        ) : (
+          <div>No classes available now</div>
+        )}
       </div>
-      <ClasslinkPopupComponent
-        showPopup={showPopup}
-        setShowPopup={setShowPopup}
-        manageId={manageId}
-        classLink={classLink}
-        setClassLink={setClassLink}
-        studentID={studentID}
-        teacherID={teacherID}
-      />
-    </>
+      {isAuth().role === "teacher" && editMode ? (
+        <button onClick={handleSubmit} className="save-button">
+          {/* {props.joinClassContent.saveContent} */}
+          <Save />
+        </button>
+      ) : null}
+      {isAuth().role === "teacher" ? (
+        <button
+          onClick={handleToggleEditMode}
+          className={editMode ? "back-button" : "edit-button"}
+        >
+          {/* {editMode ? props.joinClassContent.cancelContent: props.joinClassContent.editContent} */}
+          {editMode ? <Cancel /> : <Edit />}
+        </button>
+      ) : null}
+    </li>
   );
 };
+
+export default JoinClassItem;

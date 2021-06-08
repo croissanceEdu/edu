@@ -1,69 +1,68 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router,Route,Redirect,Switch } from 'react-router-dom'
-import "react-toastify/dist/ReactToastify.css"
+// import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from 'react-toastify';
 
 
-// import "./assets/bootstrap-material-design-font/css/material.css"
-// import "./assets/tether/tether.min.css"
-// import "./assets/bootstrap/css/bootstrap.min.css"
-// import "./assets/animate.css/animate.min.css"
-// import "./assets/dropdown/css/style.css"
-// import "./assets/theme/css/style.css"
-// import "./assets/theme/css/font-awesome.min.css"
-// import "./assets/mobirise/css/mbr-additional.css" 
-// import "./assets/bootstrap/css/w3.css"
 
- import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./css/main.css";
+import "./css/font.css";
 
 
+// import HomePage from './components/pages/home.page';
+// import NavbarSection from './components/sections/navbar.section';
+// import LoginPage from './components/pages/login.page';
+// import { isAuth } from './helpers/auth';
 
-import Activate from './components/screens/activate.screen';
-import Register from './components/screens/register.screen';
-import Login from './components/screens/login.screen';
-import JoinClass from './components/screens/join-class.screen';
-import StudentHome from './components/screens/student-home.screen';
-import SyllabusList from './components/screens/syllabus.list.screen';
-import Feedback from './components/screens/feedback.screen'
-import SyllabusAdd from './components/screens/syllabus-add.screen';
-import StudentMapEdit from './components/student-map-edit.component';
-import ChangePassword from './components/screens/change-password.screen';
-import CreateDefaults from './components/screens/create-defaults.screen';
-import ManageComponent from './components/screens/manage.screen';
+// import Api from './helpers/content-api';
 
-
-
-
-
-
-
+import App from './App';
+// import BackdropExtra from './components/extras/backdrop.extra';
 
 
 require('dotenv').config();
 
-
-
 ReactDOM.render(
-  <Router>
+  <React.StrictMode>
     <ToastContainer></ToastContainer>
-    
-    
-    <Switch>
-      <Route path='/' exact render={props=><StudentHome{...props}/>}/>
-      <Route path='/register' exact render={props=><Register{...props}/>}/>
-      <Route path='/login' exact render={props=><Login{...props}/>}/>
-      <Route path='/user/activate/:token' exact render={props=><Activate{...props}/>}/>
-      <Route path='/joinclass' exact render={props=><JoinClass{...props}/>}/>
-      <Route path='/syllabus' exact render={props=><SyllabusList{...props}/>}/>
-      <Route path='/feedback' exact render={props=><Feedback{...props}/>}/>
-      <Route path='/syllabusadd' exact render={props=><SyllabusAdd{...props}/>}/>
-      <Route path='/manage' exact render={props=><ManageComponent{...props}/>}/>
-      <Route path="/classlinkedit/:id"  exact render={props=><StudentMapEdit{...props}/>}/>
-      <Route path="/changepassword"  exact render={props=><ChangePassword{...props}/>}/>
-      <Route path="/user/create/new/admin"  exact render={props=><CreateDefaults{...props}/>}/>
+    <App />
 
-    </Switch>
-  </Router>,
+  </React.StrictMode>,
   document.getElementById('root')
 );
+
+
+// let language = "English";
+
+// let urlPathContent = Api.getUrlPathContent(language);
+
+
+// if (!isAuth())
+//   ReactDOM.render(
+//     <Router>
+//       <ToastContainer></ToastContainer>
+//       <Redirect to={urlPathContent.loginPage} />
+//       <Route path={urlPathContent.loginPage} exact render={props => <LoginPage {...props} language={language} toast={toast} />} />
+//     </Router>,
+//     document.getElementById('root')
+//   )
+
+// else
+//   ReactDOM.render(
+//     <Router>
+//       <ToastContainer></ToastContainer>
+
+//       <Route path={urlPathContent.homePage} render={props => <NavbarSection  {...props} language={language} toast={toast} />} />
+
+//       <Switch>
+
+//         <Route path={urlPathContent.homePage} exact render={props => <HomePage {...props} language={language} toast={toast} />} />
+//         <Route path={urlPathContent.loginPage} exact render={props => <LoginPage {...props} language={language} toast={toast} />} />
+
+//       </Switch>
+//     </Router>,
+//     document.getElementById('root')
+//   );

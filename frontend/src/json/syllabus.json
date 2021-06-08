@@ -1,0 +1,32 @@
+[
+    {
+        "language": "English",
+        "uncheckableMode": false,
+        "tabWindows": [
+            {
+                "name": "syllabusListTab",
+                "content": "Chapters",
+                "availableFor": [
+                    "admin",
+                    "teacher",
+                    "student"
+                ]
+            },
+            {
+                "name": "editSyllabusTab",
+                "content": "Edit",
+                "availableFor": [
+                    "teacher"
+                ]
+            }
+        ],
+        "titleContent": "Syllabus",
+        "checkCompleteContent": "Complete",
+        "uncheckCompleteContent": "unCheck",
+        "completedContent": "Complete",
+        "deleteContent": "Delete",
+        "chapterContent": "Chapter",
+        "moduleContent": "Module",
+        "addContent": "Add"
+    }
+]

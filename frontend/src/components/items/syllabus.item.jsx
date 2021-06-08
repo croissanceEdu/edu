@@ -1,155 +1,105 @@
-import React from "react";
-import { isAuth } from "../../helpers/auth";
-
 const SyllabusItem = (props) => {
   return (
-    <React.Fragment>
-      <tr>
-        <td>{props.i}</td>
-        <td>{props.syllabus.chapterName}</td>
-        <td>{props.syllabus.moduleName}</td>
+    <li className={props.itemClass}>
+      <div className="all-details">
+        <div className="primary-details">
+          <div>
+            <h3>{props.syllabus.chapterName}</h3>
+            {props.syllabus.isNewStatus ? (
+              <small className="badge badge-dark badge-pill text-white">
+                New
+              </small>
+            ) : null}
+          </div>
+        </div>
+        <div className="secondary-details">
+          <div className="checkbox-details">
+            {props.editMode ? null : (
+              <>
+                <div>
+                  <input
+                    type="checkbox"
+                    name="teacherComplete"
+                    id="teacherComplete"
+                    checked={props.syllabus.teacherComplete}
+                    value={props.syllabus.teacherComplete}
+                    readOnly
+                  />
+                  <label htmlFor="teacherComplete">Teacher</label>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    name="studentComplete"
+                    id="studentComplete"
+                    checked={props.syllabus.studentComplete}
+                    value={props.syllabus.studentComplete}
+                    readOnly
+                  />
+                  <label htmlFor="studentComplete">Student</label>
+                </div>
+              </>
+            )}
+          </div>
 
-        <td>
-          <input
-            type="checkbox"
-            name="teacherComplete"
-            id="teacherComplete"
-            checked={props.syllabus.teacherComplete}
-            value={props.syllabus.teacherComplete}
-            readOnly
-          />
-        </td>
-        <td>
-          <input
-            className=" "
-            type="checkbox"
-            name="studentComplete"
-            id="studentComplete"
-            checked={props.syllabus.studentComplete}
-            value={props.syllabus.studentComplete}
-            readOnly
-          />
-        </td>
-        <td>
-          {isAuth().role === "student" ? (
-            props.syllabus.studentComplete ? null : (
-              <a
-                className="btn btn-info"
+          {props.editMode ? (
+            props.syllabus.teacherComplete || props.syllabus.studentComplete ? (
+              <button
+                className="delete-button"
+                disabled
+                onClick={() => {
+                  props.deleteSyllabus(props.syllabus._id);
+                }}
+              >
+                {props.syllabusContent.deleteContent}
+              </button>
+            ) : (
+              <button
+                className="delete-button"
+                onClick={() => {
+                  props.deleteSyllabus(props.syllabus._id);
+                }}
+              >
+                {props.syllabusContent.deleteContent}
+              </button>
+            )
+          ) : props.loginAs === "admin" ? null : (props.loginAs === "teacher" &&
+              props.syllabus.teacherComplete) ||
+            (props.loginAs === "student" && props.syllabus.studentComplete) ? (
+            props.syllabusContent.uncheckableMode ? (
+              <button
+                className="save-button"
+                onClick={() => {
+                  props.unCheckSyllabus(props.syllabus._id);
+                }}
+              >
+                {props.syllabusContent.uncheckCompleteContent}
+              </button>
+            ) : (
+              <button
+                className="primary-button"
+                disabled
                 onClick={() => {
                   props.completeSyllabus(props.syllabus._id);
                 }}
               >
-                Complete
-              </a>
+                {props.syllabusContent.completedContent}
+              </button>
             )
-          ) : isAuth().role === "teacher" ? (
-            props.syllabus.teacherComplete ? null : (
-              <a
-                className="btn btn-info"
-                onClick={() => {
-                  props.completeSyllabus(props.syllabus._id);
-                }}
-              >
-                Complete
-              </a>
-            )
-          ) : null}
-        </td>
-      </tr>
-    </React.Fragment>
+          ) : (
+            <button
+              className="primary-button"
+              onClick={() => {
+                props.completeSyllabus(props.syllabus._id);
+              }}
+            >
+              {props.syllabusContent.checkCompleteContent}
+            </button>
+          )}
+        </div>
+      </div>
+    </li>
   );
-
-  if (isAuth().role === "student") {
-    return (
-      <React.Fragment>
-        <tr>
-          <td>{props.syllabus.chapterName}</td>
-          <td>{props.syllabus.moduleName}</td>
-          <td>
-            {props.syllabus.studentComplete ? (
-              <p
-                className={
-                  props.syllabus.teacherComplete
-                    ? "text-secondary"
-                    : "text-black"
-                }
-              >
-                Completed
-              </p>
-            ) : (
-              <a
-                className={
-                  props.syllabus.teacherComplete
-                    ? "btn btn-success"
-                    : "btn btn-info"
-                }
-                onClick={() => {
-                  props.completeSyllabus(props.syllabus._id);
-                }}
-              >
-                Complete
-              </a>
-            )}
-          </td>
-        </tr>
-      </React.Fragment>
-    );
-  } else if (isAuth().role === "teacher") {
-    return (
-      <React.Fragment>
-        <tr>
-          <td>{props.syllabus.chapterName}</td>
-          <td>{props.syllabus.moduleName}</td>
-          {/* <td>
-            {props.syllabus.studentMessage}
-
-            <input
-              type="text"
-              className="text-dark rounded-5"
-              name="teacherMessage"
-              id="teacherMessage"
-              aria-describedby="helpId"
-              placeholder="your Message"
-            />
-          </td> */}
-          <td>
-            {props.syllabus.teacherComplete ? (
-              <p
-                className={
-                  props.syllabus.studentComplete
-                    ? "text-secondary"
-                    : "text-black"
-                }
-              >
-                Completed
-              </p>
-            ) : (
-              <a
-                className={
-                  props.syllabus.studentComplete
-                    ? "btn btn-success"
-                    : "btn btn-info"
-                }
-                onClick={() => {
-                  props.completeSyllabus(props.syllabus._id);
-                }}
-              >
-                Complete
-              </a>
-            )}
-          </td>
-        </tr>
-      </React.Fragment>
-    );
-  } else
-    return (
-      <tr>
-        <td>details not availabe</td>
-        {/* <td>--</td> */}
-        <td>--</td>
-        <td>--</td>
-      </tr>
-    );
 };
 
 export default SyllabusItem;
